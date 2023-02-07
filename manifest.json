@@ -2,8 +2,8 @@
 	"name": "JavaScript Errors Notifier",
 	"short_name": "js_error",
 	"description": "Notifies JavaScript errors by icon in toolbar bar or notification popup",
-	"version": "3.1.4",
-	"manifest_version": 2,
+	"version": "4.0",
+	"manifest_version": 3,
 	"background": {
 		"scripts": [
 			"background.js"
