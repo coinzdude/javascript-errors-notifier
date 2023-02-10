@@ -1,4 +1,11 @@
-﻿function htmlentities(str) {
+﻿const LS = {
+  getAllItems: () => chrome.storage.local.get(),
+  getItem: async key => (await chrome.storage.local.get(key))[key],
+  setItem: (key, val) => chrome.storage.local.set({[key]: val}),
+  removeItems: keys => chrome.storage.local.remove(keys),
+};
+
+function htmlentities(str) {
 	var div = document.createElement('div');
 	div.appendChild(document.createTextNode(str));
 	return div.innerHTML;
@@ -21,10 +28,9 @@ function initDefaultOptions() {
 		popupMaxHeight: 40
 	};
 	for(var option in optionsValues) {
-		if(typeof localStorage[option] == 'undefined') {
-			var value = optionsValues[option];
-			localStorage[option] = typeof(value) == 'boolean' ? (value ? 1 : '') : value;
-		}
+		var value = optionsValues[option];
+		value = typeof(value) == 'boolean' ? (value ? 1 : '') : value
+			LS.setItem(option, value)
 	}
 }
 initDefaultOptions();
@@ -33,27 +39,27 @@ initDefaultOptions();
 var ignoredUrlsHashes = {};
 var ignoredUrlsLimit = 100;
 
-function isUrlIgnoredByType(url) {
+async function isUrlIgnoredByType(url) {
 	if(!url.indexOf('chrome-extension://')) { // ignore Google Chrome extensions 404 errors
 		return true;
 	}
 	var ext = url.split('.').pop().split(/\#|\?/)[0].toLowerCase();
 	if(ext == 'js') {
-		return localStorage['ignore404js'];
+		return await LS.getItem('ignore404js') 
 	}
 	if(ext == 'css') {
-		return localStorage['ignore404css'];
+		return await LS.getItem('ignore404css');
 	}
-	return localStorage['ignore404others'];
+	return await LS.getItem('ignore404others');
 }
 
 function getIgnoredUrlHash(url) {
 	return url.replace(/\d+/g, '');
 }
 
-chrome.webRequest.onErrorOccurred.addListener(function(e) {
-	if((localStorage['ignoreBlockedByClient'] && e.error == 'net::ERR_BLOCKED_BY_CLIENT') ||
-		(localStorage['ignoreConnectionRefused'] && e.error == 'net::ERR_CONNECTION_REFUSED')) {
+chrome.webRequest.onErrorOccurred.addListener(async function(e) {
+	if((await LS.getItem('ignoreBlockedByClient') && e.error == 'net::ERR_BLOCKED_BY_CLIENT') ||
+		(LS.getItem('ignoreConnectionRefused') && e.error == 'net::ERR_CONNECTION_REFUSED')) {
 		var url = getIgnoredUrlHash(e.url);
 		if(!isUrlIgnoredByType(url)) {
 			if(ignoredUrlsHashes[url]) { // move url in the end of list
@@ -68,33 +74,33 @@ chrome.webRequest.onErrorOccurred.addListener(function(e) {
 	}
 }, {urls: ["<all_urls>"]});
 
-function handleInitRequest(data, sender, sendResponse) {
+async function handleInitRequest(data, sender, sendResponse) {
 	var tabHost = getBaseHostByUrl(data.url);
 	chrome.tabs.get(sender.tab.id, function callback() { // mute closed tab error
 		if(chrome.runtime.lastError) {
 			return;
 		}
-		chrome.pageAction.setTitle({
+		chrome.action.setTitle({
 			tabId: sender.tab.id,
 			title: 'No errors on this page'
 		});
-		chrome.pageAction.setPopup({
+		chrome.action.setPopup({
 			tabId: sender.tab.id,
 			popup: 'popup.html?host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id
 		});
-		chrome.pageAction.show(sender.tab.id);
+		chrome.action.show(sender.tab.id);
 	});
 	sendResponse({
-		showIcon: typeof localStorage['icon_' + tabHost] != 'undefined' ? localStorage['icon_' + tabHost] : localStorage['showIcon'],
-		showPopup: typeof localStorage['popup_' + tabHost] != 'undefined' ? localStorage['popup_' + tabHost] : localStorage['showPopup'],
-		showPopupOnMouseOver: localStorage['showPopupOnMouseOver'],
-		popupMaxWidth: localStorage['popupMaxWidth'],
-		popupMaxHeight: localStorage['popupMaxHeight']
+		showIcon: typeof LS.getItem('icon_' + tabHost) != 'undefined' ? await LS.getItem('icon_' + tabHost) : await LS.getItem('showIcon'),
+		showPopup: typeof await LS.getItem('popup_' + tabHost) != 'undefined' ? await LS.getItem('popup_' + tabHost) : await LS.getItem('showPopup'),
+		showPopupOnMouseOver: await LS.getItem('showPopupOnMouseOver'),
+		popupMaxWidth: await LS.getItem('popupMaxWidth'),
+		popupMaxHeight: await LS.getItem('popupMaxHeight')
 
 	});
 }
 
-function handleErrorsRequest(data, sender, sendResponse) {
+async function handleErrorsRequest(data, sender, sendResponse) {
 	var popupErrors = [];
 	var tabHost = getBaseHostByUrl(data.url);
 	var tabBaseUrl = (/^([\w-]+:\/\/[^\/?]+)/.exec(data.url) || [null, null])[1];
@@ -102,7 +108,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 	for(var i in data.errors) {
 		var error = data.errors[i];
 		var errorHost = getBaseHostByUrl(error.url);
-		if(localStorage['ignoreExternal'] && errorHost != tabHost) {
+		if(await LS.getItem('ignoreExternal') && errorHost != tabHost) {
 			continue;
 		}
 		if(error.is404) {
@@ -117,25 +123,25 @@ function handleErrorsRequest(data, sender, sendResponse) {
 		else {
 			error.text = error.text.replace(/^Uncaught /, '').replace(/^Error: /, '');
 
-			var errorHtml = localStorage['linkStackOverflow']
+			var errorHtml = await LS.getItem('linkStackOverflow')
 				? '<a target="_blank" href="http://www.google.com/search?q=' + encodeURIComponent(htmlentities(error.text)) + '%20site%3Astackoverflow.com" id="">' + htmlentities(error.text) + '</a>'
 				: htmlentities(error.text);
 
 			var m = new RegExp('^(\\w+):\s*(.+)').exec(error.text);
 			error.type = m ? m[1] : 'Uncaught Error';
 
-			if(localStorage['showColumn'] && error.line && error.col) {
+			if(await LS.getItem('showColumn') && error.line && error.col) {
 				error.line = error.line + ':' + error.col;
 			}
 
 			var lines;
-			if(localStorage['showTrace'] && error.stack && (lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n')).length > 2) {
+			if(await LS.getItem('showTrace') && error.stack && (lines = error.stack.replace(/\n\s*at\s+/g, '\n').split('\n')).length > 2) {
 				lines.shift();
 				for(var ii in lines) {
 					var urlMatch = /^(.*?)\(?(([\w-]+):\/\/.*?)(\)|$)/.exec(lines[ii]);
 					var url = urlMatch ? urlMatch[2] : null;
 					var method = urlMatch ? urlMatch[1].trim() : lines[ii];
-					var lineMatch = url ? (localStorage['showColumn'] ? /^(.*?):([\d:]+)$/ : /^(.*?):(\d+)(:\d+)?$/).exec(url) : null;
+					var lineMatch = url ? (await LS.getItem('showColumn') ? /^(.*?):([\d:]+)$/ : /^(.*?):(\d+)(:\d+)?$/).exec(url) : null;
 					var line = lineMatch ? lineMatch[2] : null;
 					url = lineMatch ? lineMatch[1] : url;
 					if(!url && method == 'Error (native)') {
@@ -143,7 +149,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 					}
 					errorHtml += '<br/>&nbsp;';
 					if(url) {
-						errorHtml += localStorage['linkViewSource']
+						errorHtml += await LS.getItem('linkViewSource')
 							? ('<a href="view-source:' + url + (line ? '#' + line : '') + '" target="_blank">' + url + (line ? ':' + line : '') + '</a>')
 							: (url + (line ? ':' + line : ''));
 					}
@@ -155,7 +161,7 @@ function handleErrorsRequest(data, sender, sendResponse) {
 			}
 			else {
 				var url = error.url + (error.line ? ':' + error.line : '');
-				errorHtml += '<br/>&nbsp;' + (localStorage['linkViewSource']
+				errorHtml += '<br/>&nbsp;' + (await LS.getItem('linkViewSource')
 					? '<a href="view-source:' + error.url + (error.line ? '#' + error.line : '') + '" target="_blank">' + url + '</a>'
 					: url);
 			}
@@ -167,17 +173,17 @@ function handleErrorsRequest(data, sender, sendResponse) {
 		return;
 	}
 
-	chrome.tabs.get(sender.tab.id, function callback() { // mute closed tab error
+	chrome.tabs.get(sender.tab.id, async function callback() { // mute closed tab error
 		if(chrome.runtime.lastError) {
 			return;
 		}
 
-		chrome.pageAction.setTitle({
+		chrome.action.setTitle({
 			tabId: sender.tab.id,
 			title: 'There are some errors on this page. Click to see details.'
 		});
 
-		chrome.pageAction.setIcon({
+		chrome.action.setIcon({
 			tabId: sender.tab.id,
 			path: {
 				"19": "img/error_19.png",
@@ -187,21 +193,21 @@ function handleErrorsRequest(data, sender, sendResponse) {
 
 		var errorsHtml = popupErrors.join('<br/><br/>');
 
-		if(localStorage['relativeErrorUrl'] && tabBaseUrl) {
+		if(await LS.getItem('relativeErrorUrl') && tabBaseUrl) {
 			errorsHtml = errorsHtml.split(tabBaseUrl + '/').join('/').split(tabBaseUrl).join('/');
-			if(localStorage['linkViewSource']) {
+			if(await LS.getItem('linkViewSource')) {
 				errorsHtml = errorsHtml.split('href="view-source:/').join('href="view-source:' + tabBaseUrl + '/');
 			}
 		}
 
 		var popupUri = 'popup.html?errors=' + encodeURIComponent(errorsHtml) + '&host=' + encodeURIComponent(tabHost) + '&tabId=' + sender.tab.id;
 
-		chrome.pageAction.setPopup({
+		chrome.action.setPopup({
 			tabId: sender.tab.id,
 			popup: popupUri
 		});
 
-		chrome.pageAction.show(sender.tab.id);
+		chrome.action.show(sender.tab.id);
 
 		sendResponse(chrome.extension.getURL(popupUri));
 	});
