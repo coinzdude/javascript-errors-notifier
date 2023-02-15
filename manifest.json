@@ -4,15 +4,26 @@
   "description": "Notifies JavaScript errors by icon in toolbar bar or notification popup",
   "version": "4.0",
   "manifest_version": 3,
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval';  style-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline';",
+    "sandbox": "sandbox"
+  },
   "background": {
     "service_worker": "background.js",
-	"type": "module"
+    "type": "module"
   },
   "content_scripts": [
     {
       "all_frames": true,
       "js": ["content.js"],
       "matches": ["<all_urls>"],
+      "run_at": "document_start"
+    }
+    ,
+    {
+      "world": "MAIN",
+      "matches": ["file://*/*", "http://*/*", "https://*/*"],
+      "js": ["code-to-inject.js"],
       "run_at": "document_start"
     }
   ],
@@ -30,22 +41,19 @@
     },
     "default_popup": "popup.html"
   },
-  "web_accessible_resources": [{ 
-  "resources": [
-	"code-to-inject.js",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "code-to-inject.js",
         "img/error_64.png",
         "img/error_38.png",
         "img/error_19.png",
         "popup.html",
         "options.html"
-],
-  "matches": ["<all_urls>"]
-}],
-  "permissions": [
-	"tabs", 
-	"webRequest",
-"storage"],
-  "host_permissions": [
-    "*://*/*"
-  ]
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": ["tabs", "webRequest", "storage", "activeTab", "scripting"],
+  "host_permissions": ["*://*/*"]
 }
