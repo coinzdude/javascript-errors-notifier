@@ -44,7 +44,6 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "code-to-inject.js",
         "img/error_64.png",
         "img/error_38.png",
         "img/error_19.png",
