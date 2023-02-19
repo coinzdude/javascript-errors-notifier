@@ -90,10 +90,11 @@
   window.addEventListener(
     'error',
     function (e) {
-      console.log('listener ErrorEvent')
-      this.alert('cti error thing')
 
       var src = e.target.src || e.target.href
+      // this.alert('cti error thing')
+      console.log('cti listener ErrorEvent ' + src)
+
       var baseUrl = e.target.baseURI
       if (src && baseUrl && src != baseUrl) {
         document.dispatchEvent(
@@ -108,7 +109,7 @@
     },
     true,
   )
-
+  
   console.log('end of cti')
   // }
 })()

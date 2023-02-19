@@ -26,15 +26,17 @@
 //     })
 //     .then(() => console.log("injected script file"));
 
-// chrome.scripting.registerContentScripts([
-//   {
-//     id: '0',
-//     matches: ['file://*/*', 'http://*/*', 'https://*/*'],
-//     js: ['code-to-inject.js'],
-//     world: 'MAIN',
-//     runAt: 'document_start',
-//   },
-// ])
+chrome.scripting.registerContentScripts([
+	{
+		id: '0',
+		matches: ['file://*/*', 'http://*/*', 'https://*/*'],
+		js: ['code-to-inject.js'],
+		world: 'MAIN',
+		runAt: 'document_start',
+	},
+]);
+
+
 // if (_browser.runtime.getManifest().manifest_version == 3) {
 //     _browser.scripting.unregisterContentScripts().then(() => {
 //         var scripts = [{
@@ -59,7 +61,10 @@ const LS = {
   removeItems: keys => chrome.storage.local.remove(keys),
 };
 
+// TODO Try 'communicating' back to the front end code instead of creating the DIV here like Carson says
+// https://stackoverflow.com/questions/66772626/chrome-scripting-executescript-not-working-in-my-manifest-v3-chrome-extension 
 function htmlentities(str) {
+	console.log('htmlentities ' + str);
 	var div = document.createElement('div');
 	div.appendChild(document.createTextNode(str));
 	return div.innerHTML;
@@ -174,6 +179,7 @@ async function handleErrorsRequest(data, sender, sendResponse) {
 			}
 			error.type = 'File not found';
 			error.text = error.url;
+			console.log('handleErrorsRequest');
 			popupErrors.unshift('File not found: ' + htmlentities(error.url));
 		}
 		else {
