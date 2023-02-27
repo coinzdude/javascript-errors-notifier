@@ -9,7 +9,9 @@ new (function () {
   var isIFrame = window.top != window
 
   // alert('content.js')
-  console.log('content.js')
+  console.log('running')
+
+  alert(chrome.runtime.getURL('popup.html'))
 
   // sw.evaluate(() => chrome.storage.local.write('key', 'value'))
 
@@ -115,6 +117,8 @@ new (function () {
   })
 
   function handleInternalMessage(data) {
+    debugger
+    console.log('handleInternalMessage', data)
     if (!isIFrame && (!data.tabId || data.tabId == tabId)) {
       if (data._clear) {
         errors = []
@@ -143,8 +147,35 @@ new (function () {
         handleNewError(data.error)
       }
     }
+
+    chrome.runtime.onMessage.addListener(function (
+      request,
+      sender,
+      sendResponse,
+    ) {
+      debugger
+      console.log(
+        sender.tab
+          ? 'from a content script:' + sender.tab.url
+          : 'from the extension',
+      )
+      if (request.greeting === 'hello') sendResponse({ farewell: 'goodbye' })
+    })
   }
 
+  chrome.runtime.onMessage.addListener(function (
+    request,
+    sender,
+    sendResponse,
+  ) {
+    debugger
+    console.log(
+      sender.tab
+        ? 'from a content script:' + sender.tab.url
+        : 'from the extension',
+    )
+    if (request.greeting === 'hello') sendResponse({ farewell: 'goodbye' })
+  })
   chrome.runtime.onMessage.addListener(handleInternalMessage)
 
   window.addEventListener('message', function (event) {
@@ -154,6 +185,8 @@ new (function () {
       typeof event.data._fromJEN !== 'undefined' &&
       event.data._fromJEN
     ) {
+      console.log('got message ' + event.data)
+      this.alert('got message ' + event.data)
       handleInternalMessage(event.data)
     }
   })

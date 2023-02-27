@@ -1,7 +1,9 @@
 ;(() => {
+
+  // alert('cti ' + chrome.runtime.getURL("popup.html"));
+
   // alert('code-to-inject');
   console.log('code-to-inject loaded')
-  alert('cti')
   console.log(window)
   // function codeToInject() {
 
@@ -34,14 +36,14 @@
     )
   }
 
-  console.log('cti try addEventListener')
+  console.log('addEventListener')
 
   // debugger;
 
   // handle uncaught promises errors
   window.addEventListener('unhandledrejection', function (e) {
-    console.log('code-to-inject eventListener unhandledrejection')
-    this.alert('code-to-inject eventListener unhandledrejection')
+    console.log('eventListener unhandledrejection')
+    this.alert('eventListener unhandledrejection')
 
     if (typeof e.reason === 'undefined') {
       e.reason = e.detail
@@ -69,8 +71,9 @@
   }
   // handle uncaught errors
   window.addEventListener('error', function (e) {
-    console.log('cti event listener error')
-    this.alert('cti error event')
+    console.log('event listener error')
+    this.alert('error event ' + e.message)
+
     if (e.filename) {
       document.dispatchEvent(
         new CustomEvent('ErrorToExtension', {
@@ -93,7 +96,7 @@
 
       var src = e.target.src || e.target.href
       // this.alert('cti error thing')
-      console.log('cti listener ErrorEvent ' + src)
+      console.log('listener ErrorEvent ' + src)
 
       var baseUrl = e.target.baseURI
       if (src && baseUrl && src != baseUrl) {
@@ -110,6 +113,6 @@
     true,
   )
   
-  console.log('end of cti')
+  console.log('end')
   // }
 })()
