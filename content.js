@@ -16,9 +16,11 @@ new (function () {
   // sw.evaluate(() => chrome.storage.local.write('key', 'value'))
 
   function showPopup(popupUrl) {
+        console.log(popupUrl);
+
     if (!popup) {
       popup = document.createElement('iframe')
-      popup.src = popupUrl
+      popup.src = chrome.runtime.getURL(popupUrl) // TODO this errors on subsequent alert icon clicks because it's an object with the URL inside
       popup.frameBorder = 0
       popup.style.cssText =
         'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
@@ -36,13 +38,15 @@ new (function () {
   }
 
   function showErrorNotification(popupUrl) {
-    if (options.showPopup) {
-      showPopup(popupUrl)
-    }
+    // if (options.showPopup) {
+    //   showPopup(popupUrl)
+    // }
+    showPopup(popupUrl.payload);
 
-    if (!icon && (options.showIcon || options.showPopup)) {
+    // if (!icon && (options.showIcon || options.showPopup)) {
+    if (!icon) {
       icon = document.createElement('img')
-      icon.src = chrome.extension.getURL('img/error_38.png')
+      icon.src = chrome.runtime.getURL('img/error_38.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'
       icon.style.cssText =
         'position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: 38px !important; height: 38px !important; min-height: 38px !important; min-width: 38px !important; max-height: 38px !important; max-width: 38px !important;'
@@ -54,7 +58,8 @@ new (function () {
           popup = null
         }
       }
-      if (options.showPopupOnMouseOver) {
+      // if (options.showPopupOnMouseOver) {
+      if (true) {
         icon.onmouseover = function () {
           if (!popup) {
             showPopup(popupUrl)
@@ -117,6 +122,7 @@ new (function () {
   })
 
   function handleInternalMessage(data) {
+                showErrorNotification(data)
     debugger
     console.log('handleInternalMessage', data)
     if (!isIFrame && (!data.tabId || data.tabId == tabId)) {
@@ -178,18 +184,18 @@ new (function () {
   })
   chrome.runtime.onMessage.addListener(handleInternalMessage)
 
-  window.addEventListener('message', function (event) {
-    if (
-      typeof event.data === 'object' &&
-      event.data &&
-      typeof event.data._fromJEN !== 'undefined' &&
-      event.data._fromJEN
-    ) {
-      console.log('got message ' + event.data)
-      this.alert('got message ' + event.data)
-      handleInternalMessage(event.data)
-    }
-  })
+  // window.addEventListener('message', function (event) {
+  //   if (
+  //     typeof event.data === 'object' &&
+  //     event.data &&
+  //     typeof event.data._fromJEN !== 'undefined' &&
+  //     event.data._fromJEN
+  //   ) {
+  //     console.log('got message ' + event.data)
+  //     this.alert('got message ' + event.data)
+  //     handleInternalMessage(event.data)
+  //   }
+  // })
 
   if (!isIFrame) {
     chrome.runtime.sendMessage(
