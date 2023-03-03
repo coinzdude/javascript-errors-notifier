@@ -1,4 +1,6 @@
-;(() => {
+; (() => {
+  
+  debugger
 
   // alert('cti ' + chrome.runtime.getURL("popup.html"));
 
@@ -43,7 +45,7 @@
   // handle uncaught promises errors
   window.addEventListener('unhandledrejection', function (e) {
     console.log('eventListener unhandledrejection')
-    this.alert('eventListener unhandledrejection')
+    // this.alert('eventListener unhandledrejection')
 
     if (typeof e.reason === 'undefined') {
       e.reason = e.detail
@@ -55,7 +57,7 @@
   var consoleErrorFunc = window.console.error
   window.console.error = function () {
     console.log('window.console.error function')
-    this.alert('window.console.error')
+    // this.alert('window.console.error')
     var argsArray = []
     for (var i in arguments) {
       // because arguments.join() not working! oO

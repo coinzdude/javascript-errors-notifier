@@ -11,7 +11,7 @@ new (function () {
   // alert('content.js')
   console.log('running')
 
-  alert(chrome.runtime.getURL('popup.html'))
+  // alert(chrome.runtime.getURL('popup.html'))
 
   // sw.evaluate(() => chrome.storage.local.write('key', 'value'))
 
@@ -71,7 +71,7 @@ new (function () {
   }
 
   function handleNewError(error) {
-    alert('handleNewError')
+    // alert('handleNewError')
     var lastError = errors[errors.length - 1]
     var isSameAsLast =
       lastError &&

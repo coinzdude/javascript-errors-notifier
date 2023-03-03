@@ -1,13 +1,12 @@
-﻿// chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-// 	debugger
-// 	if (changeInfo.status == 'complete') {
-// 	}
-// 	chrome.scripting.executeScript({
-//     target: {tabId: tab.id, allFrames: true},
-//     files: ['code-to-inject.js'],
-// });
+﻿chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+	if (changeInfo.status == 'loading') {
+		chrome.scripting.executeScript({
+    target: {tabId: tab.id, allFrames: true},
+    files: ['code-to-inject.js'],
+});
+}
 
-// })
+})
 
 // var my_tabid;
 
