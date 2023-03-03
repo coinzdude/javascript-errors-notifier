@@ -71,8 +71,7 @@
   }
   // handle uncaught errors
   window.addEventListener('error', function (e) {
-    console.log('event listener error')
-    this.alert('error event ' + e.message)
+console.log('window.addEventListener error', e);
 
     if (e.filename) {
       document.dispatchEvent(

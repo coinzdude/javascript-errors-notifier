@@ -20,7 +20,7 @@ new (function () {
 
     if (!popup) {
       popup = document.createElement('iframe')
-      popup.src = chrome.runtime.getURL(popupUrl) // TODO this errors on subsequent alert icon clicks because it's an object with the URL inside
+      popup.src = chrome.runtime.getURL(popupUrl.payload ? popupUrl.payload : popupUrl) // TODO this errors on subsequent alert icon clicks because it's an object with the URL inside
       popup.frameBorder = 0
       popup.style.cssText =
         'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
@@ -39,9 +39,9 @@ new (function () {
 
   function showErrorNotification(popupUrl) {
     // if (options.showPopup) {
-    //   showPopup(popupUrl)
-    // }
-    showPopup(popupUrl.payload);
+    if (false) {
+      showPopup(popupUrl)
+    }
 
     // if (!icon && (options.showIcon || options.showPopup)) {
     if (!icon) {
@@ -59,14 +59,14 @@ new (function () {
         }
       }
       // if (options.showPopupOnMouseOver) {
-      if (true) {
+      if (false) {
         icon.onmouseover = function () {
           if (!popup) {
             showPopup(popupUrl)
           }
         }
       }
-      ;(document.body || document.documentElement).appendChild(icon)
+      (document.body || document.documentElement).appendChild(icon)
     }
   }
 
@@ -123,7 +123,7 @@ new (function () {
 
   function handleInternalMessage(data) {
                 showErrorNotification(data)
-    debugger
+    // debugger
     console.log('handleInternalMessage', data)
     if (!isIFrame && (!data.tabId || data.tabId == tabId)) {
       if (data._clear) {
@@ -159,7 +159,7 @@ new (function () {
       sender,
       sendResponse,
     ) {
-      debugger
+      // debugger
       console.log(
         sender.tab
           ? 'from a content script:' + sender.tab.url
@@ -174,7 +174,7 @@ new (function () {
     sender,
     sendResponse,
   ) {
-    debugger
+    // debugger
     console.log(
       sender.tab
         ? 'from a content script:' + sender.tab.url

@@ -34,6 +34,8 @@ chrome.scripting.registerContentScripts([
   },
 ])
 
+
+
 // if (_browser.runtime.getManifest().manifest_version == 3) {
 //     _browser.scripting.unregisterContentScripts().then(() => {
 //         var scripts = [{
