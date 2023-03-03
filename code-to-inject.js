@@ -1,6 +1,6 @@
 ; (() => {
   
-  debugger
+  // debugger
 
   // alert('cti ' + chrome.runtime.getURL("popup.html"));
 
