@@ -16,11 +16,13 @@ new (function () {
   // sw.evaluate(() => chrome.storage.local.write('key', 'value'))
 
   function showPopup(popupUrl) {
-        console.log(popupUrl);
+    console.log(popupUrl)
 
     if (!popup) {
       popup = document.createElement('iframe')
-      popup.src = chrome.runtime.getURL(popupUrl.payload ? popupUrl.payload : popupUrl) // TODO this errors on subsequent alert icon clicks because it's an object with the URL inside
+      popup.src = chrome.runtime.getURL(
+        popupUrl.payload ? popupUrl.payload : popupUrl,
+      ) // TODO this errors on subsequent alert icon clicks because it's an object with the URL inside
       popup.frameBorder = 0
       popup.style.cssText =
         'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
@@ -66,7 +68,7 @@ new (function () {
           }
         }
       }
-      (document.body || document.documentElement).appendChild(icon)
+      ;(document.body || document.documentElement).appendChild(icon)
     }
   }
 
@@ -122,7 +124,7 @@ new (function () {
   })
 
   function handleInternalMessage(data) {
-                showErrorNotification(data)
+    showErrorNotification(data)
     // debugger
     console.log('handleInternalMessage', data)
     if (!isIFrame && (!data.tabId || data.tabId == tabId)) {
@@ -198,15 +200,26 @@ new (function () {
   // })
 
   if (!isIFrame) {
-    chrome.runtime.sendMessage(
-      {
+    (async () => {
+      const response = await chrome.runtime.sendMessage({
         _initPage: true,
         url: window.location.href,
-      },
-      function (response) {
-        options = response
-      },
-    )
+      })
+      console.log('response', response)
+      options = response    
+      // do something with response here, not outside the function
+    })();
+
+    // chrome.runtime.sendMessage(
+    //   {
+    //     _initPage: true,
+    //     url: window.location.href,
+    //   },
+    //   function (response) {
+    //   console.log('response', response)
+    //     options = response
+    //   }
+    // );
   }
 })()
 

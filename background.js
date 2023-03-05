@@ -145,7 +145,7 @@ chrome.webRequest.onErrorOccurred.addListener(
   { urls: ['<all_urls>'] },
 )
 
-async function handleInitRequest(data, sender, sendResponse) {
+async function handleInitRequest(data, sender) {
   var tabHost = getBaseHostByUrl(data.url)
   chrome.tabs.get(sender.tab.id, function callback() {
     // mute closed tab error
@@ -167,7 +167,7 @@ async function handleInitRequest(data, sender, sendResponse) {
     console.log(sender.tab.id)
     // chrome.action.show(sender.tab.id);
   })
-  sendResponse({
+  return {
     showIcon:
       typeof LS.getItem('icon_' + tabHost) != 'undefined'
         ? await LS.getItem('icon_' + tabHost)
@@ -179,7 +179,7 @@ async function handleInitRequest(data, sender, sendResponse) {
     showPopupOnMouseOver: await LS.getItem('showPopupOnMouseOver'),
     popupMaxWidth: await LS.getItem('popupMaxWidth'),
     popupMaxHeight: await LS.getItem('popupMaxHeight'),
-  })
+  };
 }
 
 async function handleErrorsRequest(data, sender, sendResponse) {
@@ -352,16 +352,23 @@ async function handleErrorsRequest(data, sender, sendResponse) {
   })
 }
 
-chrome.runtime.onMessage.addListener(async function (
+chrome.runtime.onMessage.addListener((
   data,
   sender,
   sendResponse,
-) {
+) => {
   if (data._initPage) {
-    await handleInitRequest(data, sender, sendResponse)
+    // var popupMaxHeight = LS.getItem('popupMaxHeight').then((data) => {
+    var popupMaxHeight = LS.getAllItems().then((data) => {
+      console.log('popupMaxHeight', data);
+      sendResponse(data
+      )
+    }
+    );
+    // sendResponse (await handleInitRequest(data, sender))
   } else if (data._errors) {
     // debugger;
-    await handleErrorsRequest(data, sender, sendResponse)
+    handleErrorsRequest(data, sender, sendResponse)
   }
   return true
 })
