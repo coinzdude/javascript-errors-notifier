@@ -40,13 +40,11 @@ new (function () {
   }
 
   function showErrorNotification(popupUrl) {
-    // if (options.showPopup) {
-    if (false) {
+    if (options.showPopup) {
       showPopup(popupUrl)
     }
 
-    // if (!icon && (options.showIcon || options.showPopup)) {
-    if (!icon) {
+    if (!icon && (options.showIcon || options.showPopup)) {
       icon = document.createElement('img')
       icon.src = chrome.runtime.getURL('img/error_38.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'
@@ -60,8 +58,7 @@ new (function () {
           popup = null
         }
       }
-      // if (options.showPopupOnMouseOver) {
-      if (false) {
+      if (options.showPopupOnMouseOver) {
         icon.onmouseover = function () {
           if (!popup) {
             showPopup(popupUrl)
@@ -155,49 +152,22 @@ new (function () {
         handleNewError(data.error)
       }
     }
-
-    chrome.runtime.onMessage.addListener(function (
-      request,
-      sender,
-      sendResponse,
-    ) {
-      // debugger
-      console.log(
-        sender.tab
-          ? 'from a content script:' + sender.tab.url
-          : 'from the extension',
-      )
-      if (request.greeting === 'hello') sendResponse({ farewell: 'goodbye' })
-    })
   }
 
-  chrome.runtime.onMessage.addListener(function (
-    request,
-    sender,
-    sendResponse,
-  ) {
-    // debugger
-    console.log(
-      sender.tab
-        ? 'from a content script:' + sender.tab.url
-        : 'from the extension',
-    )
-    if (request.greeting === 'hello') sendResponse({ farewell: 'goodbye' })
-  })
   chrome.runtime.onMessage.addListener(handleInternalMessage)
 
-  // window.addEventListener('message', function (event) {
-  //   if (
-  //     typeof event.data === 'object' &&
-  //     event.data &&
-  //     typeof event.data._fromJEN !== 'undefined' &&
-  //     event.data._fromJEN
-  //   ) {
-  //     console.log('got message ' + event.data)
-  //     this.alert('got message ' + event.data)
-  //     handleInternalMessage(event.data)
-  //   }
-  // })
+  window.addEventListener('message', function (event) {
+    if (
+      typeof event.data === 'object' &&
+      event.data &&
+      typeof event.data._fromJEN !== 'undefined' &&
+      event.data._fromJEN
+    ) {
+      // console.log('got message ' + event.data)
+      // this.alert('got message ' + event.data)
+      handleInternalMessage(event.data)
+    }
+  })
 
   if (!isIFrame) {
     (async () => {

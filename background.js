@@ -1,11 +1,10 @@
 ﻿chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-	if (changeInfo.status == 'loading') {
-		chrome.scripting.executeScript({
-    target: {tabId: tab.id, allFrames: true},
-    files: ['code-to-inject.js'],
-});
-}
-
+  if (changeInfo.status == 'loading') {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id, allFrames: true },
+      files: ['code-to-inject.js'],
+    })
+  }
 })
 
 // var my_tabid;
@@ -32,8 +31,6 @@ chrome.scripting.registerContentScripts([
     runAt: 'document_start',
   },
 ])
-
-
 
 // if (_browser.runtime.getManifest().manifest_version == 3) {
 //     _browser.scripting.unregisterContentScripts().then(() => {
@@ -93,6 +90,7 @@ function initDefaultOptions() {
     var value = optionsValues[option]
     value = typeof value == 'boolean' ? (value ? 1 : '') : value
     LS.setItem(option, value)
+    console.log('setting ', option, value);
   }
 }
 initDefaultOptions()
@@ -147,6 +145,15 @@ chrome.webRequest.onErrorOccurred.addListener(
 
 async function handleInitRequest(data, sender) {
   var tabHost = getBaseHostByUrl(data.url)
+
+  var showIcon = typeof (await LS.getItem('icon_' + tabHost)) != 'undefined'
+    ? await LS.getItem('icon_' + tabHost)
+    : await LS.getItem('showIcon');
+  var showPopup = typeof (await LS.getItem('popup_' + tabHost)) != 'undefined'
+    ? await LS.getItem('popup_' + tabHost)
+    : await LS.getItem('showPopup');
+  var showPopupOnMouseOver = await LS.getItem('showPopupOnMouseOver');
+
   chrome.tabs.get(sender.tab.id, function callback() {
     // mute closed tab error
     if (chrome.runtime.lastError) {
@@ -169,7 +176,7 @@ async function handleInitRequest(data, sender) {
   })
   return {
     showIcon:
-      typeof LS.getItem('icon_' + tabHost) != 'undefined'
+      typeof (await LS.getItem('icon_' + tabHost)) != 'undefined'
         ? await LS.getItem('icon_' + tabHost)
         : await LS.getItem('showIcon'),
     showPopup:
@@ -179,7 +186,7 @@ async function handleInitRequest(data, sender) {
     showPopupOnMouseOver: await LS.getItem('showPopupOnMouseOver'),
     popupMaxWidth: await LS.getItem('popupMaxWidth'),
     popupMaxHeight: await LS.getItem('popupMaxHeight'),
-  };
+  }
 }
 
 async function handleErrorsRequest(data, sender, sendResponse) {
@@ -352,20 +359,14 @@ async function handleErrorsRequest(data, sender, sendResponse) {
   })
 }
 
-chrome.runtime.onMessage.addListener((
-  data,
-  sender,
-  sendResponse,
-) => {
+chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   if (data._initPage) {
     // var popupMaxHeight = LS.getItem('popupMaxHeight').then((data) => {
-    var popupMaxHeight = LS.getAllItems().then((data) => {
-      console.log('popupMaxHeight', data);
-      sendResponse(data
-      )
-    }
-    );
-    // sendResponse (await handleInitRequest(data, sender))
+    // var popupMaxHeight = LS.getAllItems().then((data) => {
+    //   console.log('popupMaxHeight', data)
+    //   sendResponse(data)
+    // })
+    handleInitRequest(data, sender).then((data) => { sendResponse(data) });
   } else if (data._errors) {
     // debugger;
     handleErrorsRequest(data, sender, sendResponse)
