@@ -8,12 +8,7 @@ new (function () {
   var options
   var isIFrame = window.top != window
 
-  // alert('content.js')
   console.log('running')
-
-  // alert(chrome.runtime.getURL('popup.html'))
-
-  // sw.evaluate(() => chrome.storage.local.write('key', 'value'))
 
   function showPopup(popupUrl) {
     console.log(popupUrl)
@@ -27,15 +22,17 @@ new (function () {
       popup.style.cssText =
         'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
       popup.height = '50px'
-      ;(document.body || document.documentElement).appendChild(popup)
+        ; (document.body || document.documentElement).appendChild(popup)
     } else {
-      popup.contentWindow.postMessage(
-        {
-          _reloadPopup: true,
-          url: popupUrl,
-        },
-        '*',
-      )
+      if (typeof popupUrl != 'object') {
+        popup.contentWindow.postMessage(
+          {
+            _reloadPopup: true,
+            url: popupUrl,
+          },
+          '*',
+        )
+      }
     }
   }
 
@@ -70,7 +67,6 @@ new (function () {
   }
 
   function handleNewError(error) {
-    // alert('handleNewError')
     var lastError = errors[errors.length - 1]
     var isSameAsLast =
       lastError &&
@@ -122,8 +118,6 @@ new (function () {
 
   function handleInternalMessage(data) {
     showErrorNotification(data)
-    // debugger
-    console.log('handleInternalMessage', data)
     if (!isIFrame && (!data.tabId || data.tabId == tabId)) {
       if (data._clear) {
         errors = []
@@ -163,8 +157,6 @@ new (function () {
       typeof event.data._fromJEN !== 'undefined' &&
       event.data._fromJEN
     ) {
-      // console.log('got message ' + event.data)
-      // this.alert('got message ' + event.data)
       handleInternalMessage(event.data)
     }
   })
@@ -177,34 +169,7 @@ new (function () {
       })
       console.log('response', response)
       options = response    
-      // do something with response here, not outside the function
     })();
 
-    // chrome.runtime.sendMessage(
-    //   {
-    //     _initPage: true,
-    //     url: window.location.href,
-    //   },
-    //   function (response) {
-    //   console.log('response', response)
-    //     options = response
-    //   }
-    // );
   }
 })()
-
-// _script = document.createElement('script');
-// _script.setAttribute('src', chrome.runtime.getURL('code-to-inject.js'));
-// (document.head||document.documentElement).appendChild( _script  );
-// _script.parentNode.removeChild(_script);
-
-// var s = document.createElement('script');
-// 	s.src = "code-to-inject.js"
-// 		chrome.runtime.getURL('code-to-inject.js');
-// s.onload = function() {
-//     this.remove();
-// };
-// (document.head || document.documentElement).appendChild(s);
-
-// alert('code-to-inject');
-// function codeToInject() {

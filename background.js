@@ -15,37 +15,16 @@
 //     my_tabid=tabs[0].id;
 // });
 
-// chrome.scripting
-//     .executeScript({
-//       target : {tabId: 0},
-//       files : [ "code-to-inject.js" ],
-//     })
-//     .then(() => console.log("injected script file"));
 
-chrome.scripting.registerContentScripts([
-  {
-    id: '0',
-    matches: ['file://*/*', 'http://*/*', 'https://*/*'],
-    js: ['code-to-inject.js'],
-    world: 'MAIN',
-    runAt: 'document_start',
-  },
-])
-
-// if (_browser.runtime.getManifest().manifest_version == 3) {
-//     _browser.scripting.unregisterContentScripts().then(() => {
-//         var scripts = [{
-//              id: "inject",
-//              js: ["code-to-inject.js"],
-//              matches: ["<all_urls>"],
-//              world: "MAIN",
-//              runAt: "document_start",
-//          }];
-//         _browser.scripting.registerContentScripts(scripts);
-//     });
-// }
-
-// debugger
+// chrome.scripting.registerContentScripts([
+//   {
+//     id: '0',
+//     matches: ['file://*/*', 'http://*/*', 'https://*/*'],
+//     js: ['code-to-inject.js'],
+//     world: 'MAIN',
+//     runAt: 'document_start',
+//   },
+// ])
 
 console.log('chrome.action: ' + chrome.action)
 
@@ -90,7 +69,7 @@ function initDefaultOptions() {
     var value = optionsValues[option]
     value = typeof value == 'boolean' ? (value ? 1 : '') : value
     LS.setItem(option, value)
-    console.log('setting ', option, value);
+    console.log('setting ', option, value)
   }
 }
 initDefaultOptions()
@@ -145,14 +124,6 @@ chrome.webRequest.onErrorOccurred.addListener(
 
 async function handleInitRequest(data, sender) {
   var tabHost = getBaseHostByUrl(data.url)
-
-  var showIcon = typeof (await LS.getItem('icon_' + tabHost)) != 'undefined'
-    ? await LS.getItem('icon_' + tabHost)
-    : await LS.getItem('showIcon');
-  var showPopup = typeof (await LS.getItem('popup_' + tabHost)) != 'undefined'
-    ? await LS.getItem('popup_' + tabHost)
-    : await LS.getItem('showPopup');
-  var showPopupOnMouseOver = await LS.getItem('showPopupOnMouseOver');
 
   chrome.tabs.get(sender.tab.id, function callback() {
     // mute closed tab error
@@ -361,15 +332,14 @@ async function handleErrorsRequest(data, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
   if (data._initPage) {
-    // var popupMaxHeight = LS.getItem('popupMaxHeight').then((data) => {
-    // var popupMaxHeight = LS.getAllItems().then((data) => {
-    //   console.log('popupMaxHeight', data)
-    //   sendResponse(data)
-    // })
-    handleInitRequest(data, sender).then((data) => { sendResponse(data) });
+    handleInitRequest(data, sender).then((data) => {
+      sendResponse(data)
+    })
   } else if (data._errors) {
     // debugger;
     handleErrorsRequest(data, sender, sendResponse)
+  } else if (data._setOption) {
+    LS.setItem(data.optionName, data.optionValue)
   }
   return true
 })

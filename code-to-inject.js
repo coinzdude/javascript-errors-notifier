@@ -1,15 +1,5 @@
 ; (() => {
-  
-  // debugger
-
-  // alert('cti ' + chrome.runtime.getURL("popup.html"));
-
-  // alert('code-to-inject');
-  // console.log('code-to-inject loaded')
-  // console.log(window)
-  // function codeToInject() {
-
-  function handleCustomError(message, stack) {
+    function handleCustomError(message, stack) {
     console.log('handleCustomError')
     if (!stack) {
       stack = new Error().stack.split('\n').splice(2, 4).join('\n')

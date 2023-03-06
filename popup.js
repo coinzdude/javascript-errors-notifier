@@ -8,6 +8,7 @@ function copyToClipboard(str) {
 	document.execCommand('Copy', false, null);
 }
 
+// TODO Move all localStorage usage into background.js
 function initOptionSwitcher(imgNode, domainOption, globalOption, srcValues) {
 	switchersStates[domainOption] = domainOption in localStorage ? +localStorage[domainOption] : (localStorage[globalOption] ? 1 : 0);
 	imgNode.src = srcValues[switchersStates[domainOption]];
@@ -15,6 +16,12 @@ function initOptionSwitcher(imgNode, domainOption, globalOption, srcValues) {
 		switchersStates[domainOption] = +!switchersStates[domainOption];
 		localStorage[domainOption] = switchersStates[domainOption] ? 1 : '';
 		imgNode.src = srcValues[switchersStates[domainOption]];
+		chrome.runtime.sendMessage({
+			_setOption: true,
+			optionName: domainOption,
+			optionValue: localStorage[domainOption]
+		}
+      );
 	};
 }
 
