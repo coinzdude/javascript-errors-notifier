@@ -8,10 +8,7 @@ new (function () {
   var options
   var isIFrame = window.top != window
 
-  console.log('running')
-
   function showPopup(popupUrl) {
-    console.log(popupUrl)
 
     if (!popup) {
       popup = document.createElement('iframe')
@@ -167,7 +164,6 @@ new (function () {
         _initPage: true,
         url: window.location.href,
       })
-      console.log('response', response)
       options = response    
     })();
 

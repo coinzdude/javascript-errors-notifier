@@ -7,26 +7,26 @@
   }
 })
 
-// var my_tabid;
-
-// chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-//     console.log(tabs[0].url);
-//     console.log(tabs[0].id);
-//     my_tabid=tabs[0].id;
-// });
-
-
-// chrome.scripting.registerContentScripts([
-//   {
-//     id: '0',
-//     matches: ['file://*/*', 'http://*/*', 'https://*/*'],
-//     js: ['code-to-inject.js'],
-//     world: 'MAIN',
-//     runAt: 'document_start',
-//   },
-// ])
-
-console.log('chrome.action: ' + chrome.action)
+var optionsEntries = [
+  'ignore404css',
+  'ignore404js',
+  'ignore404others',
+  'ignoreBlockedByClient',
+  'ignoreConnectionRefused',
+  'ignoreExternal',
+  'isRecommended',
+  'jscrNotified',
+  'linkStackOverflow',
+  'linkViewSource',
+  'popupMaxHeight',
+  'popupMaxWidth',
+  'relativeErrorUrl',
+  'showIcon',
+  'showColumn',
+  'showPopup',
+  'showPopupOnMouseOver',
+  'showTrace',
+]
 
 const LS = {
   getAllItems: () => chrome.storage.local.get(),
@@ -35,14 +35,9 @@ const LS = {
   removeItems: (keys) => chrome.storage.local.remove(keys),
 }
 
-// TODO Try 'communicating' back to the front end code instead of creating the DIV here like Carson says
-// https://stackoverflow.com/questions/66772626/chrome-scripting-executescript-not-working-in-my-manifest-v3-chrome-extension
 function htmlentities(str) {
   console.log('htmlentities ' + str)
   var htmlDiv = '<div>' + str + '</div>'
-  // var div = document.createElement('div');
-  // div.appendChild(document.createTextNode(str));
-  // return div.innerHTML;
   return htmlDiv
 }
 
@@ -58,18 +53,27 @@ function getBaseHostByUrl(url) {
 function initDefaultOptions() {
   console.log('initDefaultOptions')
   var optionsValues = {
-    showIcon: true,
+    ignore404css: false,
+    ignore404js: false,
     ignore404others: true,
+    ignoreConnectionRefused: true,
     ignoreBlockedByClient: true,
-    relativeErrorUrl: true,
-    popupMaxWidth: 70,
+    ignoreExternal: true,
+    linkStackOverflow: false,
+    linkViewSource: false,
     popupMaxHeight: 40,
+    popupMaxWidth: 70,
+    relativeErrorUrl: true,
+    showColumn: false,
+    showIcon: true,
+    showPopup: false,
+    showPopupOnMouseOver: false,
+    showTrace: false,
   }
   for (var option in optionsValues) {
     var value = optionsValues[option]
     value = typeof value == 'boolean' ? (value ? 1 : '') : value
     LS.setItem(option, value)
-    console.log('setting ', option, value)
   }
 }
 initDefaultOptions()
@@ -143,7 +147,6 @@ async function handleInitRequest(data, sender) {
         sender.tab.id,
     })
     console.log(sender.tab.id)
-    // chrome.action.show(sender.tab.id);
   })
   return {
     showIcon:
@@ -308,11 +311,6 @@ async function handleErrorsRequest(data, sender, sendResponse) {
       popup: popupUri,
     })
 
-    console.log(sender.tab.id)
-    // chrome.action.show(sender.tab.id);
-
-    console.log(popupUri)
-
     chrome.tabs.sendMessage(sender.tab.id, {
       message: 'ShowPopupError',
       tabId: sender.tab.id,
@@ -325,8 +323,6 @@ async function handleErrorsRequest(data, sender, sendResponse) {
       payload: popupUri,
     })
 
-    // sendResponse(chrome.extension.getURL(popupUri));
-    // sendResponse(popupUri);
   })
 }
 
@@ -335,8 +331,12 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
     handleInitRequest(data, sender).then((data) => {
       sendResponse(data)
     })
+  } else if (data._getOptions) {
+    LS.getAllItems().then((data) => {
+      console.log(data)
+      sendResponse(data)
+    })
   } else if (data._errors) {
-    // debugger;
     handleErrorsRequest(data, sender, sendResponse)
   } else if (data._setOption) {
     LS.setItem(data.optionName, data.optionValue)

@@ -13,6 +13,9 @@ Any links removed from documentation or from within the code are merely to compl
 <!-- [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/jafmfknfnkoekkdocjiaipcnmkklaajd.svg?maxAge=2592000&style=flat-square)](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd) -->
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 <!-- [![Chrome Web Store](https://img.shields.io/chrome-web-store/d/jafmfknfnkoekkdocjiaipcnmkklaajd.svg?maxAge=86400&style=flat-square)](https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd) -->
+v4
+[![Author]()](https://www.linkedin.com/in/robert-castles-a9113a/)
+
 
 ## Installation
 
@@ -20,9 +23,9 @@ Any links removed from documentation or from within the code are merely to compl
 
 * Google Chrome -
  <!-- * https://chrome.google.com/webstore/detail/javascript-errors-notifie/jafmfknfnkoekkdocjiaipcnmkklaajd -->
-* Firefox - <https://addons.mozilla.org/en-US/firefox/addon/javascript-errors>
+<!-- * Firefox - <https://addons.mozilla.org/en-US/firefox/addon/javascript-errors> -->
 
-2. Check [test page](http://consle.com/instance/examples/#handle_javascript_errors) to see how JavaScript errors will be handled in your browser.
+<!-- 2. Check [test page](http://consle.com/instance/examples/#handle_javascript_errors) to see how JavaScript errors will be handled in your browser. -->
 
 ## Features
 
@@ -45,6 +48,6 @@ Any links removed from documentation or from within the code are merely to compl
 
 ## Contribution
 
-* Check [Issues](https://github.com/barbushin/javascript-errors-notifier/issues) page for feature requests.
-* Please keep original code style: use `tab` for indention, and all other spacing & braces formatting same as in original.
+* Check [Issues](https://github.com/coinzdude/javascript-errors-notifier/issues) page for feature requests.
+* Please keep original code style: use VS code prettier for formatting, and all other spacing & braces formatting same as in original.
 * Test your code twice :) Thank you!
