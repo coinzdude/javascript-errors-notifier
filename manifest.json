@@ -4,10 +4,6 @@
   "description": "Notifies JavaScript errors by icon in toolbar bar or notification popup",
   "version": "4.0",
   "manifest_version": 3,
-  "content_security_policy": {
-    "extension_pages": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval';  style-src 'self' 'unsafe-inline'; script-src-elem 'self' 'unsafe-inline';",
-    "sandbox": "sandbox"
-  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -18,8 +14,7 @@
       "js": ["content.js", "document_start.js"],
       "matches": ["<all_urls>"],
       "run_at": "document_start"
-    }
-    ,
+    },
     {
       "world": "MAIN",
       "matches": ["file://*/*", "http://*/*", "https://*/*"],

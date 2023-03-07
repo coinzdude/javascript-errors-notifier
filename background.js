@@ -1,4 +1,17 @@
-﻿chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+﻿// This was an attempt to resolve caught (in promise) Error: Cannot access a chrome:// URL 
+// but it did not help. Not sure if this is needed in general or not.
+// chrome.runtime.onInstalled.addListener(async () => {
+//   for (const cs of chrome.runtime.getManifest().content_scripts) {
+//     for (const tab of await chrome.tabs.query({url: cs.matches})) {
+//       chrome.scripting.executeScript({
+//         target: {tabId: tab.id},
+//         files: cs.js,
+//       });
+//     }
+//   }
+// });
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status == 'loading') {
     chrome.scripting.executeScript({
       target: { tabId: tab.id, allFrames: true },
@@ -36,7 +49,6 @@ const LS = {
 }
 
 function htmlentities(str) {
-  console.log('htmlentities ' + str)
   var htmlDiv = '<div>' + str + '</div>'
   return htmlDiv
 }
@@ -51,12 +63,11 @@ function getBaseHostByUrl(url) {
 }
 
 function initDefaultOptions() {
-  console.log('initDefaultOptions')
   var optionsValues = {
     ignore404css: false,
     ignore404js: false,
-    ignore404others: true,
-    ignoreConnectionRefused: true,
+    ignore404others: false,
+    ignoreConnectionRefused: false,
     ignoreBlockedByClient: true,
     ignoreExternal: true,
     linkStackOverflow: false,
@@ -146,7 +157,6 @@ async function handleInitRequest(data, sender) {
         '&tabId=' +
         sender.tab.id,
     })
-    console.log(sender.tab.id)
   })
   return {
     showIcon:
@@ -184,7 +194,6 @@ async function handleErrorsRequest(data, sender, sendResponse) {
       }
       error.type = 'File not found'
       error.text = error.url
-      console.log('handleErrorsRequest')
       popupErrors.unshift('File not found: ' + htmlentities(error.url))
     } else {
       error.text = error.text.replace(/^Uncaught /, '').replace(/^Error: /, '')
@@ -333,7 +342,6 @@ chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
     })
   } else if (data._getOptions) {
     LS.getAllItems().then((data) => {
-      console.log(data)
       sendResponse(data)
     })
   } else if (data._errors) {
