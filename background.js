@@ -28,6 +28,7 @@
     'ignoreBlockedByClient',
     'ignoreConnectionRefused',
     'ignoreExternal',
+    'includeDomains',
     'isRecommended',
     'jscrNotified',
     'linkStackOverflow',
@@ -171,6 +172,7 @@
       showPopupOnMouseOver: await LS.getItem('showPopupOnMouseOver'),
       popupMaxWidth: await LS.getItem('popupMaxWidth'),
       popupMaxHeight: await LS.getItem('popupMaxHeight'),
+      includeDomains: await LS.getItem('includeDomains')
     }
   }
 

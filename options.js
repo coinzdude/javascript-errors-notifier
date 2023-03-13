@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
       'ignoreExternal',
       'ignoreBlockedByClient',
       'ignoreConnectionRefused',
+      'includeDomains',
       'popupMaxWidth',
       'popupMaxHeight',
     ]
@@ -37,6 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
       var value = options[option]
       var input = document.getElementById(option)
 
+      if (input.type == 'textarea') {
+        if (value == undefined)
+        {
+          value = "";
+        }  
+      }
       if (input.type == 'checkbox') {
         if (value) {
           input.checked = true
@@ -46,7 +53,8 @@ document.addEventListener('DOMContentLoaded', function () {
             store(option, this.checked ? 1 : '')
           }
         })(option)
-      } else {
+      }
+      else {
         input.value = value
         input.onkeyup = (function (option) {
           return function () {

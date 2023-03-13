@@ -9,7 +9,6 @@ new (function () {
   var isIFrame = window.top != window
 
   function showPopup(popupUrl) {
-
     if (!popup) {
       popup = document.createElement('iframe')
       popup.src = chrome.runtime.getURL(
@@ -19,7 +18,7 @@ new (function () {
       popup.style.cssText =
         'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
       popup.height = '50px'
-        ; (document.body || document.documentElement).appendChild(popup)
+      ;(document.body || document.documentElement).appendChild(popup)
     } else {
       if (typeof popupUrl != 'object') {
         popup.contentWindow.postMessage(
@@ -37,8 +36,15 @@ new (function () {
     if (options.showPopup) {
       showPopup(popupUrl)
     }
-
-    if (!icon && (options.showIcon || options.showPopup)) {
+    var includeSite = false
+    var includeDomainsArray = options.includeDomains?.split(/\r?\n/)
+    for (var i = 0; i < includeDomainsArray.length; i++) {
+      if (window.location.hostname.includes(includeDomainsArray[i])) {
+        includeSite = true
+        break
+      }
+    }
+    if (!icon && (options.showIcon || options.showPopup || includeSite)) {
       icon = document.createElement('img')
       icon.src = chrome.runtime.getURL('img/error_38.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'
@@ -159,13 +165,12 @@ new (function () {
   })
 
   if (!isIFrame) {
-    (async () => {
+    ;(async () => {
       const response = await chrome.runtime.sendMessage({
         _initPage: true,
         url: window.location.href,
       })
-      options = response    
-    })();
-
+      options = response
+    })()
   }
 })()
