@@ -8,20 +8,13 @@ function store(optionName, optionValue) {
   })
 }
 
-chrome.runtime.onMessage.addListener((data, sender, sendResponse) => {
-  if (data._redrawOptions) {
-    (async () => {
-    options = await chrome.runtime.sendMessage({
-      _getOptions: true,
-    })
-    filloutOptions()
-  })()
-  }
-})
-
 async function restoreDefaults() {
   await chrome.runtime.sendMessage({
     _restoreDefaults: true,
+    url: window.location.href,
+  })
+  options = await chrome.runtime.sendMessage({
+    _getOptions: true,
   })
   filloutOptions()
 }
@@ -60,6 +53,8 @@ function filloutOptions() {
     if (input.type == 'checkbox') {
       if (value) {
         input.checked = true
+      } else {
+        input.checked = false
       }
       input.onchange = (function (option) {
         return function () {

@@ -1,11 +1,4 @@
 ﻿;(() => {
-  chrome.runtime.onInstalled.addListener(async () => {
-    initDefaultOptions()
-    chrome.runtime.sendMessage({
-      _redrawOptions: true,
-    })
-  })
-
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'loading') {
       chrome.scripting.executeScript({
@@ -14,32 +7,6 @@
       })
     }
   })
-
-  function restoreDefaults() {
-    chrome.storage.local.clear(initDefaultOptions())
-  }
-
-  var optionsEntries = [
-    'ignore404css',
-    'ignore404js',
-    'ignore404others',
-    'ignoreBlockedByClient',
-    'ignoreConnectionRefused',
-    'ignoreExternal',
-    'includeDomains',
-    'isRecommended',
-    'jscrNotified',
-    'linkStackOverflow',
-    'linkViewSource',
-    'popupMaxHeight',
-    'popupMaxWidth',
-    'relativeErrorUrl',
-    'showIcon',
-    'showColumn',
-    'showPopup',
-    'showPopupOnMouseOver',
-    'showTrace',
-  ]
 
   const LS = {
     getAllItems: () => chrome.storage.local.get(),
@@ -341,6 +308,13 @@
       handleInitRequest(data, sender).then((data) => {
         sendResponse(data)
       })
+    } else if (data._restoreDefaults) {
+      chrome.storage.local.clear().then((data) => {
+        initDefaultOptions()
+        LS.getAllItems().then((data) => {
+          sendResponse(data)
+        })
+      })
     } else if (data._getOptions) {
       LS.getAllItems().then((data) => {
         sendResponse(data)
@@ -349,8 +323,6 @@
       handleErrorsRequest(data, sender, sendResponse)
     } else if (data._setOption) {
       LS.setItem(data.optionName, data.optionValue)
-    } else if (data._restoreDefaults) {
-      restoreDefaults()
     }
     return true
   })
