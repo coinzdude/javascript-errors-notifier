@@ -103,7 +103,4 @@
     },
     true,
   )
-  
-  console.log('end')
-  // }
 })()

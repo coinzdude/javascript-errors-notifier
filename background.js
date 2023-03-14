@@ -1,16 +1,10 @@
 ﻿;(() => {
-  // This was an attempt to resolve caught (in promise) Error: Cannot access a chrome:// URL
-  // but it did not help. Not sure if this is needed in general or not.
-  // chrome.runtime.onInstalled.addListener(async () => {
-  //   for (const cs of chrome.runtime.getManifest().content_scripts) {
-  //     for (const tab of await chrome.tabs.query({url: cs.matches})) {
-  //       chrome.scripting.executeScript({
-  //         target: {tabId: tab.id},
-  //         files: cs.js,
-  //       });
-  //     }
-  //   }
-  // });
+  chrome.runtime.onInstalled.addListener(async () => {
+    initDefaultOptions()
+    chrome.runtime.sendMessage({
+      _redrawOptions: true,
+    })
+  })
 
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'loading') {
@@ -20,6 +14,10 @@
       })
     }
   })
+
+  function restoreDefaults() {
+    chrome.storage.local.clear(initDefaultOptions())
+  }
 
   var optionsEntries = [
     'ignore404css',
@@ -89,7 +87,6 @@
       LS.setItem(option, value)
     }
   }
-  initDefaultOptions()
 
   // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
   var ignoredUrlsHashes = {}
@@ -172,7 +169,7 @@
       showPopupOnMouseOver: await LS.getItem('showPopupOnMouseOver'),
       popupMaxWidth: await LS.getItem('popupMaxWidth'),
       popupMaxHeight: await LS.getItem('popupMaxHeight'),
-      includeDomains: await LS.getItem('includeDomains')
+      includeDomains: await LS.getItem('includeDomains'),
     }
   }
 
@@ -352,6 +349,8 @@
       handleErrorsRequest(data, sender, sendResponse)
     } else if (data._setOption) {
       LS.setItem(data.optionName, data.optionValue)
+    } else if (data._restoreDefaults) {
+      restoreDefaults()
     }
     return true
   })
