@@ -1,4 +1,21 @@
 ﻿;(() => {
+  const readLocalStorage = async (key) => {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get([key], function (result) {
+        if (result[key] === undefined) {
+          resolve(null)
+        } else {
+          resolve(result[key])
+        }
+      })
+    })
+  }
+
+  chrome.runtime.onInstalled.addListener(function () {
+    // initDefaultOptions()
+    initDefaultOptions()
+  })
+
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status == 'loading') {
       chrome.scripting.executeScript({
@@ -29,7 +46,7 @@
       : (rootHostRegexp.exec(url) || subDomainRegexp.exec(url))[1]
   }
 
-  function initDefaultOptions() {
+  function setDefaults() {
     var optionsValues = {
       ignore404css: false,
       ignore404js: false,
@@ -37,6 +54,7 @@
       ignoreConnectionRefused: false,
       ignoreBlockedByClient: true,
       ignoreExternal: true,
+      includeDomains: "",
       linkStackOverflow: false,
       linkViewSource: false,
       popupMaxHeight: 40,
@@ -53,6 +71,16 @@
       value = typeof value == 'boolean' ? (value ? 1 : '') : value
       LS.setItem(option, value)
     }
+    LS.setItem('optionsInitialized', true)
+  }
+
+  function initDefaultOptions() {
+    const optionsInitialized = readLocalStorage('optionsInitialized')
+    Promise.resolve(optionsInitialized).then(value => {
+      if (value == null || value == false) {
+        setDefaults()
+      }
+    }) 
   }
 
   // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
