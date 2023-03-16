@@ -46,10 +46,11 @@ new (function () {
     }
     if (!icon && (options.showIcon || options.showPopup || includeSite)) {
       icon = document.createElement('img')
-      icon.src = chrome.runtime.getURL('img/error_38.png')
+      icon.src = chrome.runtime.getURL('img/error_128.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'
+      const iconSize = options.iconSize == undefined ? 38 : options.iconSize
       icon.style.cssText =
-        'position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: 38px !important; height: 38px !important; min-height: 38px !important; min-width: 38px !important; max-height: 38px !important; max-width: 38px !important;'
+        `position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: ${iconSize}px !important; height: ${iconSize}px !important; min-height: ${iconSize}px !important; min-width: ${iconSize}px !important; max-height: ${iconSize}px !important; max-width: ${iconSize}px !important;`
       icon.onclick = function () {
         if (!popup) {
           showPopup(popupUrl)

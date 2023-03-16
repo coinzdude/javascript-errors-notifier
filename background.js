@@ -48,6 +48,7 @@
 
   function setDefaults() {
     var optionsValues = {
+      iconSize: 38,
       ignore404css: false,
       ignore404js: false,
       ignore404others: false,
@@ -165,6 +166,7 @@
       popupMaxWidth: await LS.getItem('popupMaxWidth'),
       popupMaxHeight: await LS.getItem('popupMaxHeight'),
       includeDomains: await LS.getItem('includeDomains'),
+      iconSize: await LS.getItem('iconSize')
     }
   }
 

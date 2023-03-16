@@ -84,7 +84,6 @@
             id="popupMaxWidth"
             maxlength="2"
             size="2"
-            value="80"
             class="size"
           />
           % - maximum popup width
@@ -97,7 +96,6 @@
             id="popupMaxHeight"
             maxlength="2"
             size="2"
-            value="80"
             class="size"
           />
           % - maximum popup height
@@ -106,6 +104,17 @@
       <p>
         <label>Include domains(disable 'icon on all domains' to use only these domains)</label>
           <textarea id="includeDomains" rows="3" style="width: 80%; max-width: 80%;"></textarea>
+      </p>
+      <p>
+        <label>
+          <input
+            type="text"
+            id="iconSize"
+            maxlength="2"
+            size="2"
+            class="size"
+          /> Notification size override (default is 38)
+          </label>
       </p>
       <div style="margin-top: 10px;">
         * Contribute to source code or request new feature on

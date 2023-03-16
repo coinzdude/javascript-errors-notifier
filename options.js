@@ -29,6 +29,7 @@ function filloutOptions() {
     'linkStackOverflow',
     'linkViewSource',
     'relativeErrorUrl',
+    'iconSize',
     'ignore404js',
     'ignore404css',
     'ignore404others',
@@ -45,7 +46,7 @@ function filloutOptions() {
     var value = options[option]
     var input = document.getElementById(option)
 
-    if (input.type == 'textarea') {
+    if (input.type == 'textarea' || input.type == 'text') {
       if (value == undefined) {
         value = ''
       }
