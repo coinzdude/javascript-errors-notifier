@@ -85,7 +85,9 @@ function filloutOptions() {
   }
 
   document.getElementById('restore-defaults').onclick = function () {
-    restoreDefaults()
+    let result = window.confirm("Reset all options to default?");
+    if (result)
+      restoreDefaults()
   }
 }
 
