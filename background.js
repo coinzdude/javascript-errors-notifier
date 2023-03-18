@@ -357,6 +357,15 @@
     } else if (data._errors) {
       handleErrorsRequest(data, sender, sendResponse)
     } else if (data._setOption) {
+      // TODO See if we can get a message back to CTI.js 
+      // if (data.optionName == 'ignoreConsoleError') {
+      //      chrome.tabs.sendMessage(sender.tab.id, {
+      //     _fromBackground: true,
+      //     _forCTI: true,
+      //     optionName: data.optionName,
+      //     optionValue: data.optionValue,
+      //   })
+      // }
       LS.setItem(data.optionName, data.optionValue)
     }
     return true

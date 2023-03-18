@@ -1,4 +1,4 @@
-; (() => {
+;(() => {
   function handleCustomError(message, stack) {
     // console.log('handleCustomError')
     if (!stack) {
@@ -30,7 +30,6 @@
 
   async function interceptConsoleError(ignoreConsoleError) {
     var consoleErrorFunc
-
     if (ignoreConsoleError == undefined || ignoreConsoleError == false) {
       consoleErrorFunc = window.console.error
       // alert('ignoreConsoleError' + ignoreConsoleError)
