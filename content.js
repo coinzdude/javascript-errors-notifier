@@ -155,21 +155,19 @@ new (function () {
 
   async function getItemFromBackgroundForCTI(optionName) {
     const optionValue = await chrome.runtime.sendMessage({
-      _getOption: true,
-      optionName: optionName
+      _getOptionFromBackground: true,
+      optionName: optionName,
     })
     window.postMessage({
       _forCTI: true,
       optionName: optionName,
-      optionValue: optionValue
+      optionValue: optionValue,
     })
   }
 
   window.addEventListener('message', function (event) {
-    if (event.data._fromCTI) {
-      if (event.data._getOption) {
-        getItemFromBackgroundForCTI(event.data.optionName)
-      }
+    if (event.data._fromCTI && event.data._getOption) {
+      getItemFromBackgroundForCTI(event.data.optionName)
     }
     if (
       typeof event.data === 'object' &&

@@ -1,4 +1,4 @@
-;(() => {
+; (() => {
   function handleCustomError(message, stack) {
     // console.log('handleCustomError')
     if (!stack) {
@@ -29,9 +29,12 @@
   }
 
   async function interceptConsoleError(ignoreConsoleError) {
+    var consoleErrorFunc
+
     if (ignoreConsoleError == undefined || ignoreConsoleError == false) {
+      consoleErrorFunc = window.console.error
+      // alert('ignoreConsoleError' + ignoreConsoleError)
       // handle console.error()
-      var consoleErrorFunc = window.console.error
       window.console.error = function () {
         // console.log('window.console.error function')
         // this.alert('window.console.error')
@@ -42,14 +45,19 @@
         }
         const stack = console.trace()
         consoleErrorFunc.apply(console, argsArray)
-        console.log(argsArray)
-        consoleErrorFunc.apply(console, stack)
+        //TODO Consider option to capture stack in errors notification
+        // consoleErrorFunc.apply(console, stack)
 
         handleCustomError(
           argsArray.length == 1 && typeof argsArray[0] == 'string'
             ? argsArray[0]
             : JSON.stringify(argsArray.length == 1 ? argsArray[0] : argsArray),
         )
+      }
+    } else {
+      // alert('ignoreConsoleError' + ignoreConsoleError)
+      if (consoleErrorFunc != undefined) {
+        window.console.error = consoleErrorFunc
       }
     }
   }

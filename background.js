@@ -16,14 +16,14 @@
     initDefaultOptions()
   })
 
-  chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status == 'loading') {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id, allFrames: true },
-        files: ['code-to-inject.js'],
-      })
-    }
-  })
+  // chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  //   if (changeInfo.status == 'loading') {
+  //     chrome.scripting.executeScript({
+  //       target: { tabId: tab.id, allFrames: true },
+  //       files: ['code-to-inject.js'],
+  //     })
+  //   }
+  // })
 
   const LS = {
     getAllItems: () => chrome.storage.local.get(),
@@ -346,7 +346,7 @@
           sendResponse(data)
         })
       })
-    } else if (data._getOption) {
+    } else if (data._getOptionFromBackground) {
       LS.getItem(data.optionName).then((data) => {
         sendResponse(data)
       })
