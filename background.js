@@ -53,9 +53,10 @@
       ignore404js: false,
       ignore404others: false,
       ignoreConnectionRefused: false,
+      ignoreConsoleError: false,
       ignoreBlockedByClient: true,
       ignoreExternal: true,
-      includeDomains: "",
+      includeDomains: '',
       linkStackOverflow: false,
       linkViewSource: false,
       popupMaxHeight: 40,
@@ -77,11 +78,11 @@
 
   function initDefaultOptions() {
     const optionsInitialized = readLocalStorage('optionsInitialized')
-    Promise.resolve(optionsInitialized).then(value => {
+    Promise.resolve(optionsInitialized).then((value) => {
       if (value == null || value == false) {
         setDefaults()
       }
-    }) 
+    })
   }
 
   // Ignore net::ERR_BLOCKED_BY_CLIENT initiated by AdPlus & etc
@@ -166,7 +167,7 @@
       popupMaxWidth: await LS.getItem('popupMaxWidth'),
       popupMaxHeight: await LS.getItem('popupMaxHeight'),
       includeDomains: await LS.getItem('includeDomains'),
-      iconSize: await LS.getItem('iconSize')
+      iconSize: await LS.getItem('iconSize'),
     }
   }
 
@@ -344,6 +345,10 @@
         LS.getAllItems().then((data) => {
           sendResponse(data)
         })
+      })
+    } else if (data._getOption) {
+      LS.getItem(data.optionName).then((data) => {
+        sendResponse(data)
       })
     } else if (data._getOptions) {
       LS.getAllItems().then((data) => {

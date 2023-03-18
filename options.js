@@ -33,6 +33,7 @@ function filloutOptions() {
     'ignore404js',
     'ignore404css',
     'ignore404others',
+    'ignoreConsoleError',
     'ignoreExternal',
     'ignoreBlockedByClient',
     'ignoreConnectionRefused',

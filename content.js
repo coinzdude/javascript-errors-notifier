@@ -49,8 +49,7 @@ new (function () {
       icon.src = chrome.runtime.getURL('img/error_128.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'
       const iconSize = options.iconSize == undefined ? 38 : options.iconSize
-      icon.style.cssText =
-        `position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: ${iconSize}px !important; height: ${iconSize}px !important; min-height: ${iconSize}px !important; min-width: ${iconSize}px !important; max-height: ${iconSize}px !important; max-width: ${iconSize}px !important;`
+      icon.style.cssText = `opacity: 0.5; position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: ${iconSize}px !important; height: ${iconSize}px !important; min-height: ${iconSize}px !important; min-width: ${iconSize}px !important; max-height: ${iconSize}px !important; max-width: ${iconSize}px !important;`
       icon.onclick = function () {
         if (!popup) {
           showPopup(popupUrl)
@@ -154,7 +153,24 @@ new (function () {
 
   chrome.runtime.onMessage.addListener(handleInternalMessage)
 
+  async function getItemFromBackgroundForCTI(optionName) {
+    const optionValue = await chrome.runtime.sendMessage({
+      _getOption: true,
+      optionName: optionName
+    })
+    window.postMessage({
+      _forCTI: true,
+      optionName: optionName,
+      optionValue: optionValue
+    })
+  }
+
   window.addEventListener('message', function (event) {
+    if (event.data._fromCTI) {
+      if (event.data._getOption) {
+        getItemFromBackgroundForCTI(event.data.optionName)
+      }
+    }
     if (
       typeof event.data === 'object' &&
       event.data &&

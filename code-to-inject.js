@@ -1,6 +1,6 @@
-; (() => {
-    function handleCustomError(message, stack) {
-    console.log('handleCustomError')
+;(() => {
+  function handleCustomError(message, stack) {
+    // console.log('handleCustomError')
     if (!stack) {
       stack = new Error().stack.split('\n').splice(2, 4).join('\n')
     }
@@ -28,13 +28,45 @@
     )
   }
 
+  async function interceptConsoleError(ignoreConsoleError) {
+    if (ignoreConsoleError == undefined || ignoreConsoleError == false) {
+      // handle console.error()
+      var consoleErrorFunc = window.console.error
+      window.console.error = function () {
+        // console.log('window.console.error function')
+        // this.alert('window.console.error')
+        var argsArray = []
+        for (var i in arguments) {
+          // because arguments.join() not working! oO
+          argsArray.push(arguments[i])
+        }
+        const stack = console.trace()
+        consoleErrorFunc.apply(console, argsArray)
+        console.log(argsArray)
+        consoleErrorFunc.apply(console, stack)
+
+        handleCustomError(
+          argsArray.length == 1 && typeof argsArray[0] == 'string'
+            ? argsArray[0]
+            : JSON.stringify(argsArray.length == 1 ? argsArray[0] : argsArray),
+        )
+      }
+    }
+  }
+
+  window.postMessage({
+    _fromCTI: true,
+    _getOption: true,
+    optionName: 'ignoreConsoleError',
+  })
+
   // console.log('addEventListener')
 
   // debugger;
 
   // handle uncaught promises errors
   window.addEventListener('unhandledrejection', function (e) {
-    console.log('eventListener unhandledrejection')
+    // console.log('eventListener unhandledrejection')
     // this.alert('eventListener unhandledrejection')
 
     if (typeof e.reason === 'undefined') {
@@ -43,27 +75,18 @@
     handleCustomError(e.reason.message, e.reason.stack)
   })
 
-  // handle console.error()
-  var consoleErrorFunc = window.console.error
-  window.console.error = function () {
-    // console.log('window.console.error function')
-    // this.alert('window.console.error')
-    var argsArray = []
-    for (var i in arguments) {
-      // because arguments.join() not working! oO
-      argsArray.push(arguments[i])
+  window.addEventListener('message', function (message) {
+    if (
+      message.data._forCTI &&
+      message.data.optionName == 'ignoreConsoleError'
+    ) {
+      interceptConsoleError(message.data.optionValue)
     }
-    consoleErrorFunc.apply(console, argsArray)
+  })
 
-    handleCustomError(
-      argsArray.length == 1 && typeof argsArray[0] == 'string'
-        ? argsArray[0]
-        : JSON.stringify(argsArray.length == 1 ? argsArray[0] : argsArray),
-    )
-  }
   // handle uncaught errors
   window.addEventListener('error', function (e) {
-// console.log('window.addEventListener error', e);
+    // console.log('window.addEventListener error', e);
 
     if (e.filename) {
       document.dispatchEvent(
@@ -84,7 +107,6 @@
   window.addEventListener(
     'error',
     function (e) {
-
       var src = e.target.src || e.target.href
       // this.alert('cti error thing')
       // console.log('listener ErrorEvent ' + src)
