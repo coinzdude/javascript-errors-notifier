@@ -49,8 +49,10 @@ new (function () {
       icon.src = chrome.runtime.getURL('img/error_128.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'
       const iconSize = options.iconSize == undefined ? 38 : options.iconSize
-      // TODO read from options for opacity: 0.5; 
-      icon.style.cssText = `position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: ${iconSize}px !important; height: ${iconSize}px !important; min-height: ${iconSize}px !important; min-width: ${iconSize}px !important; max-height: ${iconSize}px !important; max-width: ${iconSize}px !important;`
+      icon.style.cssText = `opacity: ${
+        options.notificationIconOpacity / 100
+      }; position: fixed !important; bottom: 10px !important; right: 10px !important; cursor: pointer !important; z-index: 2147483647 !important; width: ${iconSize}px !important; height: ${iconSize}px !important; min-height: ${iconSize}px !important; min-width: ${iconSize}px !important; max-height: ${iconSize}px !important; max-width: ${iconSize}px !important;`
+
       icon.onclick = function () {
         if (!popup) {
           showPopup(popupUrl)

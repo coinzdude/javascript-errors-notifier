@@ -21,32 +21,42 @@ async function restoreDefaults() {
 
 function filloutOptions() {
   var optionsIds = [
+    'iconSize',
+    'ignore404css',
+    'ignore404js',
+    'ignore404others',
+    'ignoreBlockedByClient',
+    'ignoreConnectionRefused',
+    'ignoreConsoleError',
+    'ignoreExternal',
+    'includeDomains',
+    'linkStackOverflow',
+    'linkViewSource',
+    'notificationIconOpacity',
+    'popupMaxHeight',
+    'popupMaxWidth',
+    'relativeErrorUrl',
+    'showColumn',
     'showIcon',
     'showPopup',
     'showPopupOnMouseOver',
-    'showColumn',
     'showTrace',
-    'linkStackOverflow',
-    'linkViewSource',
-    'relativeErrorUrl',
-    'iconSize',
-    'ignore404js',
-    'ignore404css',
-    'ignore404others',
-    'ignoreConsoleError',
-    'ignoreExternal',
-    'ignoreBlockedByClient',
-    'ignoreConnectionRefused',
-    'includeDomains',
-    'popupMaxWidth',
-    'popupMaxHeight',
   ]
+
+  if (options['notificationIconOpacity'] == undefined) {
+    options['notificationIconOpacity'] = 100
+  }
 
   for (var i in optionsIds) {
     var option = optionsIds[i]
     var value = options[option]
     var input = document.getElementById(option)
 
+    if (option == 'notificationIconOpacity') {
+      const opacitySlider = document.getElementById('opacityRange')
+      opacitySlider.value = options[option]
+      continue
+    }
     if (input.type == 'textarea' || input.type == 'text') {
       if (value == undefined) {
         value = ''
@@ -87,9 +97,8 @@ function filloutOptions() {
   }
 
   document.getElementById('restore-defaults').onclick = function () {
-    let result = window.confirm("Reset all options to default?");
-    if (result)
-      restoreDefaults()
+    let result = window.confirm('Reset all options to default?')
+    if (result) restoreDefaults()
   }
 }
 
@@ -103,5 +112,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('close').onclick = function () {
     closePopup()
+  }
+
+  var opacitySlider = document.getElementById('opacityRange')
+  opacitySlider.oninput = function () {
+    store('notificationIconOpacity', this.value)
   }
 })

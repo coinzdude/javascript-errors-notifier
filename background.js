@@ -59,6 +59,7 @@
       includeDomains: '',
       linkStackOverflow: false,
       linkViewSource: false,
+      notificationIconOpacity: 100,
       popupMaxHeight: 40,
       popupMaxWidth: 70,
       relativeErrorUrl: true,
@@ -168,6 +169,7 @@
       popupMaxHeight: await LS.getItem('popupMaxHeight'),
       includeDomains: await LS.getItem('includeDomains'),
       iconSize: await LS.getItem('iconSize'),
+      notificationIconOpacity: await LS.getItem('notificationIconOpacity')
     }
   }
 
