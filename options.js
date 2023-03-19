@@ -31,7 +31,7 @@ function filloutOptions() {
     'ignoreExternal',
     'includeDomains',
     'linkStackOverflow',
-    'linkViewSource',
+    // 'linkViewSource',
     'notificationIconOpacity',
     'popupMaxHeight',
     'popupMaxWidth',

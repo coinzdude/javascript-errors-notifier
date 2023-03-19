@@ -240,15 +240,17 @@
             }
             errorHtml += '<br/>&nbsp;'
             if (url) {
-              errorHtml += (await LS.getItem('linkViewSource'))
-                ? '<a href="view-source:' +
-                  url +
-                  (line ? '#' + line : '') +
-                  '" target="_blank">' +
-                  url +
-                  (line ? ':' + line : '') +
-                  '</a>'
-                : url + (line ? ':' + line : '')
+              errorHtml +=
+                // (await LS.getItem('linkViewSource'))
+                // ? '<a href="view-source:' +
+                //   url +
+                //   (line ? '#' + line : '') +
+                //   '" target="_blank">' +
+                //   url +
+                //   (line ? ':' + line : '') +
+                // '</a>'
+                // :
+                url + (line ? ':' + line : '')
             }
             if (method) {
               errorHtml += ' ' + method + '()'
@@ -258,14 +260,18 @@
           var url = error.url + (error.line ? ':' + error.line : '')
           errorHtml +=
             '<br/>&nbsp;' +
-            ((await LS.getItem('linkViewSource'))
-              ? '<a href="view-source:' +
-                error.url +
-                (error.line ? '#' + error.line : '') +
-                '" target="_blank">' +
-                url +
-                '</a>'
-              : url)
+          (
+            // (
+            //   await LS.getItem('linkViewSource'))
+            //   ? '<a href="view-source:' +
+            //     error.url +
+            //     (error.line ? '#' + error.line : '') +
+            //     '" target="_blank">' +
+            //     url +
+            //   '</a>' 
+            //   :
+              url
+          )
         }
         popupErrors.push(errorHtml)
       }
@@ -302,11 +308,11 @@
           .join('/')
           .split(tabBaseUrl)
           .join('/')
-        if (await LS.getItem('linkViewSource')) {
-          errorsHtml = errorsHtml
-            .split('href="view-source:/')
-            .join('href="view-source:' + tabBaseUrl + '/')
-        }
+        // if (await LS.getItem('linkViewSource')) {
+        //   errorsHtml = errorsHtml
+        //     .split('href="view-source:/')
+        //     .join('href="view-source:' + tabBaseUrl + '/')
+        // }
       }
 
       var popupUri =
