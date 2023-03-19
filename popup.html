@@ -1,33 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>JavaScript Errors Notifier</title>
-	<script type="text/javascript" src="common.js"></script>
-	<script type="text/javascript" src="popup.js"></script>
-	<link rel="stylesheet" type="text/css" href="styles.css" />
-	<style>
-		body {
-			margin-left: 5px;
-			margin-right: 5px;
-			margin-top: 5px;
-			margin-bottom: 0;
-		}
-	</style>
-</head>
-<body>
-
-<pre>
+  <head>
+    <meta charset="UTF-8" />
+    <title>JavaScript Errors Notifier</title>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <style>
+      body {
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-top: 5px;
+        margin-bottom: 0;
+		max-width: 800px;
+		max-height: 600px;
+        min-width: 260px;
+        min-height: 80px;
+        overflow-y: scroll;
+		/* overflow-x: hidden; */
+      }
+    </style>
+  </head>
+  <body>
+    <pre>
 	<span id="errors"></span>
 </pre>
 
-<div class="buttonsBlock">
-		<a href="#x" title="Copy"><img title="copy" id="copy" src="img/copy.png" /></a
-		><a href="#x"><img title="show popup" id="showPopup" src="img/popup_off.png" /></a
-		><a href="#x"><img title="show icon" id="showIcon" src="img/icon_off.png" /></a
-		><a href="options.html" title="Options (global)"><img title="settings" src="img/settings.png" /></a
-		><a href="#x" id="clear" title="Clear"><img title="close" src="img/close.png" /></a>
-	</div>
-
-</body>
+    <div class="buttonsBlock">
+      <a href="#x" title="Copy">
+        <img title="copy" id="copy" src="img/copy.png" />
+      </a>
+      <a href="#x">
+        <img title="show popup" id="showPopup" src="img/popup_off.png" />
+      </a>
+      <a href="#x">
+        <img title="show icon" id="showIcon" src="img/icon_off.png" />
+      </a>
+      <a href="options.html" title="Options (global)">
+        <img title="settings" src="img/settings.png" />
+      </a>
+      <a href="#x" id="clear" title="Clear">
+        <img title="close" src="img/close.png" />
+      </a>
+    </div>
+  </body>
 </html>
