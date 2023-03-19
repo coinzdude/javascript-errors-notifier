@@ -93,9 +93,8 @@
 
   // handle uncaught errors
   window.addEventListener('error', function (e) {
-    // console.log('window.addEventListener error', e);
-
-    if (e.filename) {
+    // ignore internally caught and ignored ResizeObserver 'error'
+    if (e.filename && e.message != 'ResizeObserver loop limit exceeded') {
       document.dispatchEvent(
         new CustomEvent('ErrorToExtension', {
           detail: {
