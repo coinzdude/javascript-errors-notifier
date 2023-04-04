@@ -11,13 +11,15 @@ new (function () {
   function showPopup(popupUrl) {
     if (!popup) {
       popup = document.createElement('iframe')
+      popup.id = 'js-notifier-alert'
       popup.src = chrome.runtime.getURL(
         popupUrl.payload ? popupUrl.payload : popupUrl,
       ) // TODO this errors on subsequent alert icon clicks because it's an object with the URL inside
       popup.frameBorder = 0
+      popup.height = '150px'
+      popup.width = '400px'
       popup.style.cssText =
-        'position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
-      popup.height = '50px'
+        'min-height: 150px !important; min-width: 400px !important; position: fixed !important; bottom: 50px !important; right: 50px !important; z-index: 2147483647 !important;'
       ;(document.body || document.documentElement).appendChild(popup)
     } else {
       if (typeof popupUrl != 'object') {
