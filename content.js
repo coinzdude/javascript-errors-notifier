@@ -35,7 +35,7 @@ new (function () {
   }
 
   function showErrorNotification(popupUrl) {
-    if (options.showPopup) {
+    if (options.showPopup || (options.showDetailOnIncludeDomains && options.includeDomains.indexOf(getBaseHostByUrl(window.location.href)) + 1)) {
       showPopup(popupUrl)
     }
     var includeSite = false
@@ -192,5 +192,14 @@ new (function () {
       })
       options = response
     })()
+  }
+
+  function getBaseHostByUrl(url) {
+    var localUrlRegexp = /(file:\/\/.*)|(:\/\/[^.:]+([\/?:]|$))/ // file:// | local
+    var rootHostRegexp = /:\/\/(([\w-]+\.\w+)|(\d+\.\d+\.\d+\.\d+)|(\[[\w:]+\]))([\/?:]|$)/ // domain.com | IPv4 | IPv6
+    var subDomainRegexp = /:\/\/[^\/]*\.([\w-]+\.\w+)([\/?:]|$)/ // sub.domain.com
+    return localUrlRegexp.exec(url)
+      ? 'localhost'
+      : (rootHostRegexp.exec(url) || subDomainRegexp.exec(url))[1]
   }
 })()

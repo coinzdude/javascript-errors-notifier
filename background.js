@@ -68,6 +68,7 @@
       showPopup: false,
       showPopupOnMouseOver: false,
       showTrace: false,
+      showDetailOnIncludeDomains: false,
     }
     for (var option in optionsValues) {
       var value = optionsValues[option]
@@ -169,7 +170,8 @@
       popupMaxHeight: await LS.getItem('popupMaxHeight'),
       includeDomains: await LS.getItem('includeDomains'),
       iconSize: await LS.getItem('iconSize'),
-      notificationIconOpacity: await LS.getItem('notificationIconOpacity')
+      notificationIconOpacity: await LS.getItem('notificationIconOpacity'),
+      showDetailOnIncludeDomains: await LS.getItem('showDetailOnIncludeDomains'),
     }
   }
 
