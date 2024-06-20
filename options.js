@@ -42,6 +42,7 @@ function filloutOptions() {
     'showPopup',
     'showPopupOnMouseOver',
     'showTrace',
+    'showDetailOnIncludeDomains',
   ]
 
   if (options['notificationIconOpacity'] == undefined) {
