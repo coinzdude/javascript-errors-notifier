@@ -65,6 +65,7 @@
       relativeErrorUrl: true,
       showColumn: false,
       showIcon: true,
+      hideInPage: true,
       showPopup: false,
       showPopupOnMouseOver: false,
       showTrace: false,
@@ -161,6 +162,7 @@
         typeof (await LS.getItem('icon_' + tabHost)) != 'undefined'
           ? await LS.getItem('icon_' + tabHost)
           : await LS.getItem('showIcon'),
+      hideInPage: await LS.getItem('hideInPage'),
       showPopup:
         typeof (await LS.getItem('popup_' + tabHost)) != 'undefined'
           ? await LS.getItem('popup_' + tabHost)

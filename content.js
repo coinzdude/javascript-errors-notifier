@@ -46,7 +46,7 @@ new (function () {
         break
       }
     }
-    if (!icon && (options.showIcon || options.showPopup || includeSite)) {
+    if (!icon && !options.hideInPage && (options.showIcon || options.showPopup || includeSite)) {
       icon = document.createElement('img')
       icon.src = chrome.runtime.getURL('img/error_128.png')
       icon.title = 'Some errors occurred on this page. Click to see details.'

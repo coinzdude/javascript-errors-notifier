@@ -38,6 +38,7 @@ function filloutOptions() {
     'relativeErrorUrl',
     'showColumn',
     'showIcon',
+    'hideInPage',
     'showPopup',
     'showPopupOnMouseOver',
     'showTrace',
